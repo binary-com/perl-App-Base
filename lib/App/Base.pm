@@ -1,7 +1,7 @@
 package App::Base;
 use strict;
 use warnings;
-our $VERSION = "0.04";
+our $VERSION = "1.0.0";
 $VERSION = eval $VERSION;
 
 =head1 NAME
