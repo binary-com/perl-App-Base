@@ -138,29 +138,7 @@ has 'script_name' => (
     default => sub { path($0)->basename; },
 );
 
-=head2 logger
-
-Logger object used for logging. Should implement debug, info, warn and error
-methods. By default L<Log::Log4perl> is used.
-
 =cut
-
-has logger => (
-    is      => 'ro',
-    lazy    => 1,
-    builder => '_build_logger',
-    handles => {
-        debug   => 'debug',
-        info    => 'info',
-        warn    => 'warn',
-        notice  => 'info',
-        warning => 'warn',
-    },
-);
-
-sub _build_logger {
-    return Log::Log4perl::get_logger();
-}
 
 =head1 METHODS
 
@@ -409,12 +387,6 @@ Dispatches its arguments to the subclass-provided error() method (see REQUIRED
 SUBCLASS METHODS), then exits.
 
 =cut
-
-sub __error {
-    my $self = shift;
-    $self->logger->error( join " ", @_ );
-    exit(-1);
-}
 
 no Moose::Role;
 1;

@@ -2,7 +2,7 @@ package App::Base::Daemon;
 use 5.010;
 use Moose::Role;
 with 'App::Base::Script::Common';
-our $VERSION = "0.04";
+our $VERSION = "1.0.0";
 $VERSION = eval $VERSION;
 
 =head1 NAME
@@ -28,7 +28,6 @@ This document describes App::Base version 0.04
     sub daemon_run {
         my $self = shift;
         while (1) {
-            $self->info( 'The foo option is', $self->getOption('foo') );
             sleep(1)
         }
 
@@ -37,7 +36,7 @@ This document describes App::Base version 0.04
 
     sub handle_shutdown {
         my $self = shift;
-        $self->warning("I am shutting down now");
+        warn("I am shutting down now");
         return 0;
     }
 
@@ -213,7 +212,6 @@ around 'base_options' => sub {
 sub _signal_shutdown {
     my $self = shift;
     my $sig  = shift;
-    $self->info("Received SIG$sig, shutting down");
     $self->handle_shutdown;
     exit 0;
 }
@@ -229,7 +227,7 @@ sub __run {
             if ( $self->can_do_hot_reload ) {
                 chomp( my $pid = try { my $fh = path( $self->pid_file )->openr; <$fh>; } );
                 if ( $pid and kill USR2 => $pid ) {
-                    $self->warning("Daemon is alredy running, initiated hot reload");
+                    warn("Daemon is alredy running, initiated hot reload");
                     exit 0;
                 }
                 else {
@@ -318,15 +316,13 @@ sub _set_user_and_group {
             }
             if ($gid) {
                 POSIX::setgid($gid);
-                $self->info("Changed group to $group");
             }
             if ($uid) {
                 POSIX::setuid($uid);
-                $self->info("Changed user to $user");
             }
         }
         else {
-            $self->warning("Not running as root, can't setuid/setgid");
+            warn("Not running as root, can't setuid/setgid");
         }
     }
 
@@ -343,7 +339,7 @@ result in shutting down your daemon, use warn() instead.
 
 sub error {
     my $self = shift;
-    $self->logger->error( "Shutting down: " . join( ' ', @_ ) );
+    warn "Shutting down due to error: " . join( ' ', @_ );
 
     $self->handle_shutdown();
     return exit(-1);

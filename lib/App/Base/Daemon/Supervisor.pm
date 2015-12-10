@@ -2,7 +2,7 @@ package App::Base::Daemon::Supervisor;
 use 5.010;
 use Moose::Role;
 with 'App::Base::Daemon';
-our $VERSION = "0.04";
+our $VERSION = "1.0.0";
 $VERSION = eval $VERSION;
 
 =head1 NAME
@@ -165,7 +165,7 @@ and after return the new process may start serving clients.
 
 sub ready_to_take_over {
     my $self = shift;
-    my $pipe = $self->supervisor_pipe or confess "Supervisor pipe is not defined";
+    my $pipe = $self->supervisor_pipe or $self->error("Supervisor pipe is not defined");
     say $pipe "takeover";
     my $ok = <$pipe>;
     defined($ok) or $self->error("Failed to take over");
@@ -192,7 +192,6 @@ sub daemon_run {
                 waitpid $pid, 0;
                 exit 0;
             };
-            $self->debug("Forked a supervised process $pid");
             $chld->close;
             $par->autoflush(1);
             $self->_supervisor_pipe($par);
@@ -206,20 +205,18 @@ sub daemon_run {
                     say $par 'ok';
                 }
                 elsif ( $_ eq 'shutdown' ) {
-                    $self->debug("Worker asked for shutdown");
                     kill KILL => $pid;
                     close $par;
                 }
                 else {
-                    $self->warning("Received unknown command from the supervised process: $_");
+                    warn("Received unknown command from the supervised process: $_");
                 }
             }
-            $self->debug("Child closed control connection");
             my $kid = waitpid $pid, 0;
-            $self->warning("Supervised process $kid exited with status $?");
+            warn("Supervised process $kid exited with status $?");
         }
         elsif ( not defined $pid ) {
-            $self->warning("Couldn't fork: $!");
+            warn("Couldn't fork: $!");
         }
         else {
             local $SIG{USR2};
@@ -248,13 +245,13 @@ sub _set_hot_reload_handler {
     $SIG{USR2} = sub {
         return unless $ENV{APP_BASE_DAEMON_PID} == $$;
         if ($upgrading) {
-            $self->warning("Received USR2, but hot reload is already in progress");
+            warn("Received USR2, but hot reload is already in progress");
             return;
         }
-        $self->warning("Received USR2, initiating hot reload");
+        warn("Received USR2, initiating hot reload");
         my $pid;
         unless ( defined( $pid = fork ) ) {
-            $self->warning("Could not fork, cancelling reload");
+            warn("Could not fork, cancelling reload");
         }
         unless ($pid) {
             exec( $ENV{APP_BASE_SCRIPT_EXE}, @{ $self->{orig_args} } )
@@ -262,10 +259,10 @@ sub _set_hot_reload_handler {
         }
         $upgrading = time;
         if ( $SIG{ALRM} ) {
-            $self->warning("ALRM handler is already defined!");
+            warn("ALRM handler is already defined!");
         }
         $SIG{ALRM} = sub {
-            $self->warning("Hot reloading timed out, cancelling");
+            warn("Hot reloading timed out, cancelling");
             kill KILL => $pid;
             undef $upgrading;
         };
