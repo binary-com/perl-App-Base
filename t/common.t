@@ -19,7 +19,6 @@ with 'App::Base::Script::Common';
 
 sub __run {
     my ($self) = @_;
-    $self->notice('in the past logging at the end of a script has caused false failures');
 }
 
 sub documentation {
