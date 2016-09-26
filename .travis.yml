@@ -1,4 +1,6 @@
 language: perl
+matrix:
+    fast_finish: true
 before_install:
   - cpanm -n ExtUtils::MakeMaker
 perl:
