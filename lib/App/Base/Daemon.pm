@@ -76,6 +76,10 @@ interactive invocations.
 
 Writes PID of the daemon into specified file, by default writes pid into /var/run/__PACKAGE__.pid
 
+=head2 --log-file
+
+Writes output of the daemon into specified file, by default /dev/null
+
 =head2 --no-pid-file
 
 Do not write pid file, and do not check if it is exist and locked.
@@ -171,6 +175,24 @@ sub _build_pid_file {
     return "$file";
 }
 
+=head2 log_file
+
+log file name
+
+=cut
+
+has log_file => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build_log_file',
+);
+
+sub _build_log_file {
+    my $self = shift;
+    my $file = $self->getOption('log-file') // '/dev/null';
+    return $file;
+}
+
 =head2 can_do_hot_reload
 
 Should return true if implementation supports hot reloading
@@ -208,6 +230,12 @@ around 'base_options' => sub {
         {   name          => 'no-warn',
             documentation => 'Do not produce warnings',
         },
+        {
+            name          => 'log-file',
+            option_type   => 'string',
+            documentation => "Use specified file to save log",
+        },
+
     ];
 };
 
@@ -271,13 +299,13 @@ sub __run {
                 exit 0;
             }
             else {
-                # close all STD* files, and redirect STD* to /dev/null
+                # close all STD* files, and redirect STD* to log-file
                 for ( 0 .. 2 ) {
                     POSIX::close($_) unless $pid and $_ == $pid->fileno;
                 }
                 (         open( STDIN, '<', '/dev/null' )
-                      and open( STDOUT, '>', '/dev/null' )
-                      and open( STDERR, '>', '/dev/null' ) )
+                      and open( STDOUT, '>', $self->log_file )
+                      and open( STDERR, '>', $self->log_file ) )
                   or die "Couldn't open /dev/null: $!";
             }
         }
