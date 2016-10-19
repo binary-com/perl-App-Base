@@ -304,9 +304,10 @@ sub __run {
                     POSIX::close($_) unless $pid and $_ == $pid->fileno;
                 }
                 (         open( STDIN, '<', '/dev/null' )
-                      and open( STDOUT, '>', $self->log_file )
-                      and open( STDERR, '>', $self->log_file ) )
+                      and open( STDOUT, '>>', $self->log_file )
+                      and open( STDERR, '>>', $self->log_file ) )
                   or die "Couldn't open /dev/null: $!";
+                  our $| = 1;
             }
         }
         else {

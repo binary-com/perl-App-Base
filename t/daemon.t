@@ -15,8 +15,8 @@ use Moose;
 with 'App::Base::Daemon';
 
 sub daemon_run {
-  warn "This should be go to stderr\n";
-  print "This should be go to stdout\n";
+  warn "A warn\n";
+  print "A print\n";
   while (1) {
         Time::HiRes::usleep(1e3);
     }
@@ -159,20 +159,25 @@ if ( $> == 0 ) {
 
 subtest logfile => sub {
     my $logfile = '/tmp/test_daemon.log';
-    is(
-        Test::Daemon->new({
-                user       => 'nobody',
-                group      => 'nogroup',
-                "log-file" => $logfile,
-            },
-            )->run,
-        0,
-        "Test daemon spawns detached child process"
+    local $ENV{APP_BASE_DAEMON_PIDDIR} = $pdir;
+    local @ARGV = (
+        '--log-file' => $logfile,
+        "--no-warn"
     );
-    wait_file($logfile);
+
+    unlink $pidfile;
+    is(Test::Daemon->new->run, 0, "Test daemon spawns detached child process");
+    sleep 1;
+    wait_file($pidfile);
+    ok -f $pidfile, "Pid file exists";
+    chomp(my $pid = read_file($pidfile));
+    kill TERM => $pid;
+
     ok -f $logfile, 'log file exists';
     my $log = read_file($logfile);
-    diag($log);
+    is $log, "A warn\nA print\n", "log content is ok";
+    unlink($logfile);
+    done_testing;
 };
 
 sub wait_file {
