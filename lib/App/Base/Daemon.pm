@@ -306,7 +306,7 @@ sub __run {
                 (         open( STDIN, '<', '/dev/null' )
                       and open( STDOUT, '>>', $self->log_file )
                       and open( STDERR, '>>', $self->log_file ) )
-                  or die "Couldn't open /dev/null: $!";
+                  or die "Couldn't open " . $self->log_file . " or /dev/null: $!";
                   our $| = 1;
             }
         }
