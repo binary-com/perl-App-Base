@@ -76,9 +76,13 @@ interactive invocations.
 
 Writes PID of the daemon into specified file, by default writes pid into /var/run/__PACKAGE__.pid
 
-=head2 --log-file
+=head2 --stdout
 
-Writes output of the daemon into specified file, by default /dev/null
+Writes STDOUT output of the daemon into specified file, by default /dev/null
+
+=head2 --stderr
+
+Writes STDERR output of the daemon into specified file, by default /dev/null
 
 =head2 --no-pid-file
 
@@ -175,21 +179,21 @@ sub _build_pid_file {
     return "$file";
 }
 
-=head2 log_file
+=head2 stdout
 
 log file name
 
 =cut
 
-has log_file => (
+has stdout => (
     is      => 'ro',
     lazy    => 1,
-    builder => '_build_log_file',
+    builder => '_build_stdout',
 );
 
-sub _build_log_file {
+sub _build_stdout {
     my $self = shift;
-    my $file = $self->getOption('log-file') // '/dev/null';
+    my $file = $self->getOption('stdout') // '/dev/null';
     return $file;
 }
 
@@ -304,9 +308,9 @@ sub __run {
                     POSIX::close($_) unless $pid and $_ == $pid->fileno;
                 }
                 (         open( STDIN, '<', '/dev/null' )
-                      and open( STDOUT, '>>', $self->log_file )
-                      and open( STDERR, '>>', $self->log_file ) )
-                  or die "Couldn't open " . $self->log_file . " or /dev/null: $!";
+                      and open( STDOUT, '>>', $self->stdout )
+                      and open( STDERR, '>>', $self->stdout ) )
+                  or die "Couldn't open " . $self->stdout . " or /dev/null: $!";
                   our $| = 1;
             }
         }

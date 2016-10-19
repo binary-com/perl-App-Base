@@ -179,11 +179,11 @@ if ( $> == 0 ) {
 }
 
 subtest logfile => sub {
-    my $logfile = '/tmp/test_daemon.log';
+    my $stdout = '/tmp/test_daemon_stdout.log';
     local $ENV{APP_BASE_DAEMON_PIDDIR} = $pdir;
     my $pidfile =  $pdir->child('Test::Daemon::Log.pid');
     local @ARGV = (
-        '--log-file' => $logfile,
+        '--stdout' => $stdout,
         "--no-warn"
     );
 
@@ -195,10 +195,10 @@ subtest logfile => sub {
     chomp(my $pid = read_file($pidfile));
     kill TERM => $pid;
 
-    ok -f $logfile, 'log file exists';
-    my $log = read_file($logfile);
+    ok -f $stdout, 'log file exists';
+    my $log = read_file($stdout);
     is $log, "A warn\nA print\n", "log content is ok";
-    unlink($logfile);
+    unlink($stdout);
     done_testing;
 };
 
