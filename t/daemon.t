@@ -15,7 +15,9 @@ use Moose;
 with 'App::Base::Daemon';
 
 sub daemon_run {
-    while (1) {
+  warn "This should be go to stderr\n";
+  print "This should be go to stdout\n";
+  while (1) {
         Time::HiRes::usleep(1e3);
     }
 }
@@ -154,6 +156,24 @@ if ( $> == 0 ) {
     is $group, 'nogroup', "group is nogroup";
     kill TERM => $pid;
 }
+
+subtest logfile => sub {
+    my $logfile = '/tmp/test_daemon.log';
+    is(
+        Test::Daemon->new({
+                user       => 'nobody',
+                group      => 'nogroup',
+                "log-file" => $logfile,
+            },
+            )->run,
+        0,
+        "Test daemon spawns detached child process"
+    );
+    wait_file($logfile);
+    ok -f $logfile, 'log file exists';
+    my $log = read_file($logfile);
+    diag($log);
+};
 
 sub wait_file {
     my ( $file, $timeout ) = @_;
