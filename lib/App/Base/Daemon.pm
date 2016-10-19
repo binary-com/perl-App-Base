@@ -235,9 +235,9 @@ around 'base_options' => sub {
             documentation => 'Do not produce warnings',
         },
         {
-            name          => 'log-file',
+            name          => 'stdout',
             option_type   => 'string',
-            documentation => "Use specified file to save log",
+            documentation => "Use specified file to save STDOUT output",
         },
 
     ];
