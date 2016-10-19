@@ -15,8 +15,6 @@ use Moose;
 with 'App::Base::Daemon';
 
 sub daemon_run {
-  warn "A warn\n";
-  print "A print\n";
   while (1) {
         Time::HiRes::usleep(1e3);
     }
@@ -32,6 +30,29 @@ sub handle_shutdown {
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
+
+package Test::Daemon::Log;
+use Moose;
+with 'App::Base::Daemon';
+
+sub daemon_run {
+    my $self = shift;
+    warn "A warn\n";
+    print "A print\n";
+    while (1) {
+        Time::HiRes::usleep(1e3);
+    }
+}
+
+sub handle_shutdown {
+}
+
+sub documentation {
+}
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
+
 
 package Test::Daemon::Exiting;
 
@@ -160,13 +181,14 @@ if ( $> == 0 ) {
 subtest logfile => sub {
     my $logfile = '/tmp/test_daemon.log';
     local $ENV{APP_BASE_DAEMON_PIDDIR} = $pdir;
+    my $pidfile =  $pdir->child('Test::Daemon::Log.pid');
     local @ARGV = (
         '--log-file' => $logfile,
         "--no-warn"
     );
 
     unlink $pidfile;
-    is(Test::Daemon->new->run, 0, "Test daemon spawns detached child process");
+    is(Test::Daemon::Log->new->run, 0, "Test daemon spawns detached child process");
     sleep 1;
     wait_file($pidfile);
     ok -f $pidfile, "Pid file exists";
