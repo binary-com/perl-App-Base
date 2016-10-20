@@ -15,7 +15,7 @@ use Moose;
 with 'App::Base::Daemon';
 
 sub daemon_run {
-    while (1) {
+  while (1) {
         Time::HiRes::usleep(1e3);
     }
 }
@@ -30,6 +30,29 @@ sub handle_shutdown {
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
+
+package Test::Daemon::Log;
+use Moose;
+with 'App::Base::Daemon';
+
+sub daemon_run {
+    my $self = shift;
+    warn "A warn\n";
+    print "A print\n";
+    while (1) {
+        Time::HiRes::usleep(1e3);
+    }
+}
+
+sub handle_shutdown {
+}
+
+sub documentation {
+}
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
+
 
 package Test::Daemon::Exiting;
 
@@ -154,6 +177,34 @@ if ( $> == 0 ) {
     is $group, 'nogroup', "group is nogroup";
     kill TERM => $pid;
 }
+
+subtest logfile => sub {
+    my $stdout = '/tmp/test_daemon_stdout.log';
+    my $stderr = '/tmp/test_daemon_stderr.log';
+    local $ENV{APP_BASE_DAEMON_PIDDIR} = $pdir;
+    my $pidfile = $pdir->child('Test::Daemon::Log.pid');
+    local @ARGV = (
+        '--stdout' => $stdout,
+        '--stderr' => $stderr,
+        "--no-warn"
+    );
+
+    unlink $pidfile;
+    is(Test::Daemon::Log->new->run, 0, "Test daemon spawns detached child process");
+    sleep 1;
+    wait_file($pidfile);
+    ok -f $pidfile, "Pid file exists";
+    chomp(my $pid = read_file($pidfile));
+    kill TERM => $pid;
+
+    ok -f $stdout, 'stdout file exists';
+    ok -f $stdout, 'stderr file exists';
+    is read_file($stdout), "A print\n", "stdout log content is ok";
+    is read_file($stderr), "A warn\n",  "stderr log content is ok";
+    unlink($stdout);
+    unlink($stderr);
+    done_testing;
+};
 
 sub wait_file {
     my ( $file, $timeout ) = @_;

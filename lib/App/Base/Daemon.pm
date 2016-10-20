@@ -76,6 +76,16 @@ interactive invocations.
 
 Writes PID of the daemon into specified file, by default writes pid into /var/run/__PACKAGE__.pid
 
+=head2 --stdout
+
+Writes STDOUT output of the daemon into specified file, by default /dev/null.
+Note if the value is 'STDOUT', then STDOUT will remain unchanged and the file 'STDOUT' will not be created.
+
+=head2 --stderr
+
+Writes STDERR output of the daemon into specified file, by default /dev/null.
+Note if the value is 'STDERR', then STDERR will remain unchanged and the file 'STDERR' will not be created.
+
 =head2 --no-pid-file
 
 Do not write pid file, and do not check if it is exist and locked.
@@ -171,6 +181,42 @@ sub _build_pid_file {
     return "$file";
 }
 
+=head2 stdout
+
+log file name
+
+=cut
+
+has stdout => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build_stdout',
+);
+
+sub _build_stdout {
+    my $self = shift;
+    my $file = $self->getOption('stdout') // '/dev/null';
+    return $file;
+}
+
+=head2 stderr
+
+log file name
+
+=cut
+
+has stderr => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build_stderr',
+);
+
+sub _build_stderr {
+    my $self = shift;
+    my $file = $self->getOption('stderr') // '/dev/null';
+    return $file;
+}
+
 =head2 can_do_hot_reload
 
 Should return true if implementation supports hot reloading
@@ -208,6 +254,17 @@ around 'base_options' => sub {
         {   name          => 'no-warn',
             documentation => 'Do not produce warnings',
         },
+        {
+            name          => 'stdout',
+            option_type   => 'string',
+            documentation => "Use specified file to save STDOUT output",
+        },
+        {
+            name          => 'stderr',
+            option_type   => 'string',
+            documentation => "Use specified file to save STDERR output",
+        },
+
     ];
 };
 
@@ -271,14 +328,14 @@ sub __run {
                 exit 0;
             }
             else {
-                # close all STD* files, and redirect STD* to /dev/null
-                for ( 0 .. 2 ) {
-                    POSIX::close($_) unless $pid and $_ == $pid->fileno;
+                # close all STD* files, and redirect STD* to log-file
+                POSIX::close(0) && open(STDIN, '<', '/dev/null') || die "Couldn't replace STDIN with /dev/null: $!";
+                unless($self->stdout eq 'STDOUT'){
+                    POSIX::close(1) && open(STDOUT, '>>', $self->stdout) || die "Couldn't replace STDOUT with ". $self->stdout . ": $!";
                 }
-                (         open( STDIN, '<', '/dev/null' )
-                      and open( STDOUT, '>', '/dev/null' )
-                      and open( STDERR, '>', '/dev/null' ) )
-                  or die "Couldn't open /dev/null: $!";
+                unless($self->stderr eq 'STDERR'){
+                    POSIX::close(2) && open(STDERR, '>>', $self->stderr) || die "Couldn't replace STDERR with ". $self->stderr . ": $!";
+                }
             }
         }
         else {
