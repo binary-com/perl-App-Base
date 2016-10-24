@@ -19,7 +19,7 @@ before_install:
     - source ~/travis-perl-helpers/init
     - build-perl
     - perl -V
-    - cpanm --installdeps .
+    - cpanm -n --installdeps .
 script:
     perl Makefile.PL && PERL5OPT=-MDevel::Cover make test
 after_success:
