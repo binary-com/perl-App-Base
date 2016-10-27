@@ -106,7 +106,12 @@ FORK:
     throws_ok { Test::Daemon->new->run } qr/another copy of this daemon already running/,
       "Can not start second copy";
     ok kill( INT => $pid ), "Able to send SIGINT signal to process";
-    Time::HiRes::usleep(5e5);
+
+    #wait pid to exit at most 5 seconds
+    for(my $i = 0; $i <= 10; $i++){
+        last unless kill( 0 => $pid);
+        Time::HiRes::usleep(5e5);
+    }
     ok !kill( 0 => $pid ), "Grandchild process has shut down";
 }
 
