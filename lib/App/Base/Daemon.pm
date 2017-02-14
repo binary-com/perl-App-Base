@@ -249,9 +249,9 @@ sub __run {
         }
     }
 
-    $SIG{PIPE} = 'IGNORE';
+    local $SIG{PIPE} = 'IGNORE';
     foreach my $signal ( @{ $self->shutdown_signals } ) {
-        $SIG{$signal} = sub { App::Base::Daemon::_signal_shutdown( $self, @_ ) };
+        local $SIG{$signal} = sub { App::Base::Daemon::_signal_shutdown( $self, @_ ) };
     }
 
     # Daemonize unless specifically asked not to.
@@ -343,7 +343,7 @@ result in shutting down your daemon, use warn() instead.
 
 =cut
 
-sub error {
+sub error { ## no critic (RequireArgUnpacking)
     my $self = shift;
     warn( "Shutting down: " . join( ' ', @_ ) ) unless $self->getOption('no-warn');
 

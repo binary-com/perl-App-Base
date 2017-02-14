@@ -177,7 +177,7 @@ sub all_options {
     my $class = ref($self) || $self;
     $cache->{$class} //=
       [ map { App::Base::Script::Option->new($_) } @{ $self->options }, @{ $self->base_options } ];
-    $cache->{$class};
+    return $cache->{$class};
 }
 
 =head2 base_options
