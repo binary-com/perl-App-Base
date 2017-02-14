@@ -8,10 +8,6 @@ use File::Flock::Tiny;
 
 App::Base::Script::OnlyOne - do not allow more than one instance running
 
-=head1 VERSION
-
-This document describes App::Base version 0.05
-
 =head1 SYNOPSIS
 
     use Moose;
@@ -26,6 +22,8 @@ of programming error). After start it tries to lock pid file, and if this is
 not possible, it dies.
 
 =cut
+
+## VERSION
 
 around script_run => sub {
     my $orig = shift;
@@ -44,15 +42,3 @@ no Moose::Role;
 1;
 
 __END__
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2010-2014 Binary.com
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
-
-=cut

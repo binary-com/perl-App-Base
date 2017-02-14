@@ -6,10 +6,6 @@ use Moose::Role;
 
 App::Base::Script::Common - Behaviors common to App::Base::Script and App::Base::Daemon
 
-=head1 VERSION
-
-This document describes App::Base version 0.05
-
 =head1 DESCRIPTION
 
 App::Base::Script::Common provides infrastructure that is common to the
@@ -29,6 +25,8 @@ use Text::Reform qw( form break_wrap );
 use Try::Tiny;
 
 use MooseX::Types::Moose qw( Str Bool );
+
+## VERSION
 
 has 'return_value' => (
     is      => 'rw',
@@ -475,15 +473,5 @@ The default value specified at registration time ("bar")
 =head2 --help
 
 Print a usage statement
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2010-2014 Binary.com
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
 
 =cut

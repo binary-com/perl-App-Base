@@ -1,3 +1,6 @@
+{{$NEXT}}
+    - switch to dzil
+
 0.06 Wed Jun 1 2016 Binary.com <binary@cpan.org>
     - new option --no-warn to suppress warnings from App::Base::Daemon and App::Base::Daemon::Supervisor
 

@@ -5,10 +5,6 @@ use Moose;
 
 App::Base::Script::Option - OO interface for command-line options
 
-=head1 VERSION
-
-This document describes App::Base version 0.05
-
 =head1 SYNOPSIS
 
     my $option = App::Base::Script::Option->new(
@@ -84,6 +80,8 @@ if the 'foo' option was declared to have option_type 'integer'.
 use MooseX::Types -declare => [qw(script_option_type)];
 use MooseX::Types::Moose qw( Str );
 
+## VERSION
+
 subtype script_option_type, as Str, where {
     $_ =~ /^(integer|float|string|switch)$/;
 }, message {
@@ -144,15 +142,3 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2010-2014 Binary.com
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
-
-=cut
