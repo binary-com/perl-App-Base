@@ -246,9 +246,9 @@ sub __run {
         }
     }
 
-    local $SIG{PIPE} = 'IGNORE';
+    $SIG{PIPE} = 'IGNORE'; ## no critic (RequireLocalizedPunctuationVars)
     foreach my $signal ( @{ $self->shutdown_signals } ) {
-        local $SIG{$signal} = sub { App::Base::Daemon::_signal_shutdown( $self, @_ ) };
+        $SIG{$signal} = sub { App::Base::Daemon::_signal_shutdown( $self, @_ ) }; ## no critic (RequireLocalizedPunctuationVars)
     }
 
     # Daemonize unless specifically asked not to.
