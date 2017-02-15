@@ -3,13 +3,11 @@ use 5.010;
 use Moose::Role;
 with 'App::Base::Script::Common';
 
+## VERSION
+
 =head1 NAME
 
 App::Base::Daemon - A lazy person's tool for writing self-documenting, self-monitoring daemons
-
-=head1 VERSION
-
-This document describes App::Base version 0.05
 
 =head1 SYNOPSIS
 
@@ -217,7 +215,6 @@ around 'base_options' => sub {
 
 sub _signal_shutdown {
     my $self = shift;
-    my $sig  = shift;
     $self->handle_shutdown;
     exit 0;
 }

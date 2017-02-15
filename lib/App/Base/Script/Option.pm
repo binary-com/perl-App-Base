@@ -1,6 +1,8 @@
 package App::Base::Script::Option;
 use Moose;
 
+## VERSION
+
 =head1 NAME
 
 App::Base::Script::Option - OO interface for command-line options
@@ -21,7 +23,7 @@ App::Base::Script::Option - OO interface for command-line options
 
 App::Base::Script::Option is used by App::Base::Script::Common and its
 descendents to implement the standard definition of command-
-line options. Typically an object of this class will be 
+line options. Typically an object of this class will be
 constructed anonymously as part of the anonymous arrayref
 return value of the options() method:
 
@@ -80,7 +82,7 @@ if the 'foo' option was declared to have option_type 'integer'.
 use MooseX::Types -declare => [qw(script_option_type)];
 use MooseX::Types::Moose qw( Str );
 
-## VERSION
+
 
 subtype script_option_type, as Str, where {
     $_ =~ /^(integer|float|string|switch)$/;
@@ -107,7 +109,7 @@ has [qw(option_type)] => (
 =head2 display_name
 
 Returns the display name of the option, which is either $self->display or
-(if $self->display is not defined) $self->name. This value is used to 
+(if $self->display is not defined) $self->name. This value is used to
 generate the switch table documentation.
 
 =cut

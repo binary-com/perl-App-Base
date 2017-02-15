@@ -1,8 +1,12 @@
 package App::Base::Script::OnlyOne;
+use strict;
+use warnings;
 use Moose::Role;
 
 use Path::Tiny;
 use File::Flock::Tiny;
+
+## VERSION
 
 =head1 NAME
 
@@ -22,8 +26,6 @@ of programming error). After start it tries to lock pid file, and if this is
 not possible, it dies.
 
 =cut
-
-## VERSION
 
 around script_run => sub {
     my $orig = shift;

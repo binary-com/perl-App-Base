@@ -1,12 +1,12 @@
 package App::Base::Script;
+use strict;
+use warnings;
+
+## VERSION
 
 =head1 NAME
 
 App::Base::Script - A truly lazy person's tool for writing self-documenting, self-monitoring scripts
-
-=head1 VERSION
-
-This document describes App::Base version 0.05
 
 =head1 SYNOPSIS
 

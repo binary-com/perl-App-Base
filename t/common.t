@@ -80,11 +80,11 @@ delete $ENV{COLUMNS};
 
 my $sc = Test::Script::Common->new;
 
-my $switches = qq{--baz              The baz option                                             
---foo=<f>          The foo option should be <f> (default: bar)                
---fribitz=<f>      fribitz is a floating-point option (default: 0.01)         
---help             Show this help information                                 
---quux=N           quux is an integer option (default: 7)                     
+my $switches = qq{--baz              The baz option
+--foo=<f>          The foo option should be <f> (default: bar)
+--fribitz=<f>      fribitz is a floating-point option (default: 0.01)
+--help             Show this help information
+--quux=N           quux is an integer option (default: 7)
 };
 my $scswitches = $sc->switches;
 $scswitches =~ s/\s+/ /g;
@@ -108,11 +108,11 @@ divert_stderr(
       COLUMNS:
         {
             my $long_switches =
-              qq{--baz              The baz option                                                                     
---foo=<f>          The foo option should be <f> (default: bar)                                        
---fribitz=<f>      fribitz is a floating-point option (default: 0.01)                                 
---help             Show this help information                                                         
---quux=N           quux is an integer option (default: 7)                                             
+              qq{--baz              The baz option
+--foo=<f>          The foo option should be <f> (default: bar)
+--fribitz=<f>      fribitz is a floating-point option (default: 0.01)
+--help             Show this help information
+--quux=N           quux is an integer option (default: 7)
 };
 
             local %ENV;

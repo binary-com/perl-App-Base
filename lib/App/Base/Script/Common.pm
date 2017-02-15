@@ -1,6 +1,10 @@
 package App::Base::Script::Common;
+use strict;
+use warnings;
 use 5.010;
 use Moose::Role;
+
+## VERSION
 
 =head1 NAME
 
@@ -25,8 +29,6 @@ use Text::Reform qw( form break_wrap );
 use Try::Tiny;
 
 use MooseX::Types::Moose qw( Str Bool );
-
-## VERSION
 
 has 'return_value' => (
     is      => 'rw',

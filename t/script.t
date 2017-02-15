@@ -65,7 +65,7 @@ local %ENV = %ENV;
 delete $ENV{COLUMNS};
 my $sc = Test::Script->new;
 
-my $switches = qq{--help             Show this help information                                 
+my $switches = qq{--help             Show this help information
 };
 
 my @switch_lines = split( /[\r\n]/, $switches );

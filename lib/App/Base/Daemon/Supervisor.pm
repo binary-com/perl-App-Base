@@ -3,6 +3,8 @@ use 5.010;
 use Moose::Role;
 with 'App::Base::Daemon';
 
+## VERSION
+
 =head1 NAME
 
 App::Base::Daemon::Supervisor - supervise daemon process
@@ -16,6 +18,7 @@ App::Base::Daemon::Supervisor - supervise daemon process
     sub documentation { return 'foo'; }
     sub options { ... }
     sub supervised_process {
+        my $self = shift;
         # the main daemon process
         while(1) {
             # check if supervisor is alive, exit otherwise
@@ -340,6 +343,10 @@ sub handle_shutdown {
 
     return;
 }
+
+=head2 DEMOLISH
+
+=cut
 
 sub DEMOLISH {
     my $self = shift;
