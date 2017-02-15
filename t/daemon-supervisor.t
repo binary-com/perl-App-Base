@@ -66,7 +66,7 @@ isnt $pid, $cpid, "   and it is not the same as supervisor";
 
 note "if we kill supervised process with TERM, it should execute supervised_shutdown";
 ok(kill(TERM => $cpid), "Sent TERM to the child");
-my $count = 10;
+my $count = 20;
 while (kill(ZERO => $cpid) and $count--) {
     usleep(50_000);
 }
