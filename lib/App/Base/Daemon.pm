@@ -3,13 +3,11 @@ use 5.010;
 use Moose::Role;
 with 'App::Base::Script::Common';
 
+## VERSION
+
 =head1 NAME
 
 App::Base::Daemon - A lazy person's tool for writing self-documenting, self-monitoring daemons
-
-=head1 VERSION
-
-This document describes App::Base version 0.05
 
 =head1 SYNOPSIS
 
@@ -217,7 +215,6 @@ around 'base_options' => sub {
 
 sub _signal_shutdown {
     my $self = shift;
-    my $sig  = shift;
     $self->handle_shutdown;
     exit 0;
 }
@@ -249,9 +246,9 @@ sub __run {
         }
     }
 
-    $SIG{PIPE} = 'IGNORE';
+    $SIG{PIPE} = 'IGNORE'; ## no critic (RequireLocalizedPunctuationVars)
     foreach my $signal ( @{ $self->shutdown_signals } ) {
-        $SIG{$signal} = sub { App::Base::Daemon::_signal_shutdown( $self, @_ ) };
+        $SIG{$signal} = sub { App::Base::Daemon::_signal_shutdown( $self, @_ ) }; ## no critic (RequireLocalizedPunctuationVars)
     }
 
     # Daemonize unless specifically asked not to.
@@ -343,7 +340,7 @@ result in shutting down your daemon, use warn() instead.
 
 =cut
 
-sub error {
+sub error { ## no critic (RequireArgUnpacking)
     my $self = shift;
     warn( "Shutting down: " . join( ' ', @_ ) ) unless $self->getOption('no-warn');
 

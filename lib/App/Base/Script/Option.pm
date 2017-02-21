@@ -1,13 +1,11 @@
 package App::Base::Script::Option;
 use Moose;
 
+## VERSION
+
 =head1 NAME
 
 App::Base::Script::Option - OO interface for command-line options
-
-=head1 VERSION
-
-This document describes App::Base version 0.05
 
 =head1 SYNOPSIS
 
@@ -25,7 +23,7 @@ This document describes App::Base version 0.05
 
 App::Base::Script::Option is used by App::Base::Script::Common and its
 descendents to implement the standard definition of command-
-line options. Typically an object of this class will be 
+line options. Typically an object of this class will be
 constructed anonymously as part of the anonymous arrayref
 return value of the options() method:
 
@@ -84,6 +82,8 @@ if the 'foo' option was declared to have option_type 'integer'.
 use MooseX::Types -declare => [qw(script_option_type)];
 use MooseX::Types::Moose qw( Str );
 
+
+
 subtype script_option_type, as Str, where {
     $_ =~ /^(integer|float|string|switch)$/;
 }, message {
@@ -109,7 +109,7 @@ has [qw(option_type)] => (
 =head2 display_name
 
 Returns the display name of the option, which is either $self->display or
-(if $self->display is not defined) $self->name. This value is used to 
+(if $self->display is not defined) $self->name. This value is used to
 generate the switch table documentation.
 
 =cut
@@ -144,15 +144,3 @@ __PACKAGE__->meta->make_immutable;
 1;
 
 __END__
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2010-2014 Binary.com
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
-
-=cut

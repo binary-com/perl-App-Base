@@ -1,14 +1,14 @@
 package App::Base::Script::Common;
+use strict;
+use warnings;
 use 5.010;
 use Moose::Role;
+
+## VERSION
 
 =head1 NAME
 
 App::Base::Script::Common - Behaviors common to App::Base::Script and App::Base::Daemon
-
-=head1 VERSION
-
-This document describes App::Base version 0.05
 
 =head1 DESCRIPTION
 
@@ -179,7 +179,7 @@ sub all_options {
     my $class = ref($self) || $self;
     $cache->{$class} //=
       [ map { App::Base::Script::Option->new($_) } @{ $self->options }, @{ $self->base_options } ];
-    $cache->{$class};
+    return $cache->{$class};
 }
 
 =head2 base_options
@@ -475,15 +475,5 @@ The default value specified at registration time ("bar")
 =head2 --help
 
 Print a usage statement
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright (C) 2010-2014 Binary.com
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
 
 =cut
