@@ -87,7 +87,7 @@ Do not produce warnings, silent mode
 =cut
 
 use namespace::autoclean;
-use Try::Tiny;
+use Syntax::Keyword::Try;
 use Path::Tiny;
 
 =head2 daemon_run
@@ -228,7 +228,7 @@ sub __run {
         $pid = File::Flock::Tiny->trylock( $self->pid_file );
         unless ($pid) {
             if ( $self->can_do_hot_reload ) {
-                chomp( my $pid = try { my $fh = path( $self->pid_file )->openr; <$fh>; } );
+                chomp( my $pid = eval { my $fh = path( $self->pid_file )->openr; <$fh>; } );
                 if ( $pid and kill USR2 => $pid ) {
                     warn("Daemon is alredy running, initiated hot reload") unless $self->getOption('no-warn');
                     exit 0;
@@ -291,9 +291,9 @@ sub __run {
 
     my $result;
     try { $result = $self->daemon_run( @{ $self->parsed_args } ); }
-    catch {
-        $self->error($_);
-    };
+    catch ($e) {
+        $self->error($e);
+    }
 
     undef $pid;
 
