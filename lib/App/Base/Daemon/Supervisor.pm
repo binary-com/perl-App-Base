@@ -195,7 +195,7 @@ sub daemon_run {
             $chld->close;
             $par->autoflush(1);
             $self->_supervisor_pipe($par);
-            while (<$par>) {
+            while (local $_ = <$par>) {
                 chomp;
                 if ( $_ eq 'ping' ) {
                     say $par 'pong';
