@@ -10,17 +10,25 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          command:
+            cpm install -g --no-test Dist::Zilla Dist::Zilla::App::Command::Cover
+          name: Install Dzil
+      - run:
+          name: Install dzil author dependencies
           command: |
             cpm install -g \
-            --cpanfile cpanfile \
-            --with-develop \
-            --with-suggests \
-            --show-build-log-on-failure
+            -w 2 \
+            --mirror=http://cpan.cpantesters.org/ $(dzil authordeps --missing)
+      - run:
+          name: Install dist deps
+          command: |
+            cpm install -g \
+            -w 2 \
+            --mirror=http://cpan.cpantesters.org/ $(dzil listdpes --author --missing)
       - run:
           name: Run Tests
           command: |
-            prove -lr --jobs 2 t xt
+            dzil smoke --release --author && dzil cover -test && dzil xtest
 
 workflows:
   build-workflow:
