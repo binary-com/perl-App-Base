@@ -26,7 +26,6 @@ use List::Util qw( max );
 use Path::Tiny;
 use POSIX qw( strftime );
 use Text::Reform qw( form break_wrap );
-use Try::Tiny;
 
 use MooseX::Types::Moose qw( Str Bool );
 

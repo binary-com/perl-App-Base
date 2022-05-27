@@ -44,7 +44,7 @@ See also, L<App::Base::Script::Common> "REQUIRED METHODS"
 use Moose::Role;
 with 'App::Base::Script::Common';
 use Config;
-use Try::Tiny;
+use Syntax::Keyword::Try;
 
 =head2 script_run($self, @ARGS)
 
@@ -71,8 +71,8 @@ sub __run {
     my $result;
 
     try { $result = $self->script_run(@{$self->parsed_args}); }
-    catch {
-        $self->error($_);
+    catch ($e) {
+        $self->error($e);
     };
 
     return $result;
